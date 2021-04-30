@@ -105,6 +105,8 @@ func (b *ScenarioBuilder) Basic() *RecipeInstaller {
 	re := execution.NewGoTaskRecipeExecutor()
 	p := ux.NewPromptUIPrompter()
 	s := ux.NewPlainProgress()
+	mv := discovery.NewEmptyManifestValidator()
+	lkf := NewMockLicenseKeyFetcher()
 
 	i := RecipeInstaller{
 		discoverer:        d,
@@ -116,6 +118,8 @@ func (b *ScenarioBuilder) Basic() *RecipeInstaller {
 		status:            statusRollup,
 		prompter:          p,
 		progressIndicator: s,
+		manifestValidator: mv,
+		licenseKeyFetcher: lkf,
 	}
 
 	i.InstallerContext = b.installerContext
