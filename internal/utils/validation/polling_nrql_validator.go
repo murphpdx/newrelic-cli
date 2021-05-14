@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/newrelic/newrelic-cli/internal/credentials"
@@ -83,6 +84,11 @@ func (m *PollingNRQLValidator) waitForData(ctx context.Context, query string) (s
 
 func (m *PollingNRQLValidator) tryValidate(ctx context.Context, query string) (bool, string, error) {
 	results, err := m.executeQuery(ctx, query)
+
+	log.Print("\n\n **************************** \n")
+	log.Printf("\n PollingNRQLValidator - entity results:  %+v \n", results)
+	log.Print("\n **************************** \n\n")
+
 	if err != nil {
 		return false, "", err
 	}

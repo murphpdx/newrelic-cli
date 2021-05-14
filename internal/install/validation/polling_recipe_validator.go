@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"context"
 	"html/template"
+	"log"
+	"time"
 
 	"github.com/newrelic/newrelic-cli/internal/install/types"
 	"github.com/newrelic/newrelic-cli/internal/utils"
@@ -53,6 +55,12 @@ func substituteHostname(dm types.DiscoveryManifest, r types.OpenInstallationReci
 	if err = tmpl.Execute(&tpl, v); err != nil {
 		return "", err
 	}
+
+	log.Print("\n\n **************************** \n")
+	log.Printf("\n ValidationNRQL - raw:     %+v \n", r.ValidationNRQL)
+	log.Printf("\n ValidationNRQL - parsed:  %+v \n", tpl.String())
+	log.Print("\n **************************** \n\n")
+	time.Sleep(3 * time.Second)
 
 	return tpl.String(), nil
 }

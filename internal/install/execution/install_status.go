@@ -3,6 +3,7 @@ package execution
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
@@ -228,13 +229,39 @@ func (s *InstallStatus) IsTargetedInstall() bool {
 	return s.targetedInstall
 }
 
+func (s *InstallStatus) getOHIEntityGUID() string {
+	log.Print("\n\n **************************** \n")
+
+	for _, r := range s.RecipesInstalled {
+		log.Printf("\n getOHIEntityGUID - name:  %+v \n", r.Name)
+		log.Printf("\n getOHIEntityGUID - guid:  %+v \n", r.EntityGUID)
+
+		if r.Name != types.InfraAgentRecipeName {
+			return r.EntityGUID
+		}
+	}
+
+	log.Print("\n **************************** \n\n")
+	time.Sleep(3 * time.Second)
+
+	return s.EntityGUIDs[len(s.EntityGUIDs)-1]
+}
+
 func (s *InstallStatus) HostEntityGUID() string {
 	var guid string
+	entityCount := len(s.EntityGUIDs)
 
 	// When we have performed a targeted installation, we want to roll up to the last GUID in the list.
-	if len(s.EntityGUIDs) > 0 {
+	if entityCount > 0 {
 		if s.IsTargetedInstall() {
-			guid = s.EntityGUIDs[len(s.EntityGUIDs)-1]
+			switch entityCount {
+			case 1:
+				guid = s.EntityGUIDs[0]
+			case 2:
+				guid = s.getOHIEntityGUID()
+			default:
+				guid = s.EntityGUIDs[entityCount-1]
+			}
 		} else {
 			guid = s.EntityGUIDs[0]
 		}
